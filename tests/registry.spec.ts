@@ -65,15 +65,15 @@ test('clean existing registry instances', async ({ page }) => {
   }
 });
 
-test('create a registry instance and delete it', async ({ page }) => {
-  await login(page);
+// test('create a registry instance and delete it', async ({ page }) => {
+//   await login(page);
 
-  const testInstanceName = `test-instance-${TEST_UUID}`.substring(0, 32);
+//   const testInstanceName = `test-instance-${TEST_UUID}`.substring(0, 32);
 
-  await createRegistryInstance(page, testInstanceName);
+//   await createRegistryInstance(page, testInstanceName);
 
-  await deleteRegistryInstance(page, testInstanceName);
-});
+//   await deleteRegistryInstance(page, testInstanceName);
+// });
 
 test('create a registry instance create an artifact and delete everything', async ({ page, browserName }) => {
   test.skip(
