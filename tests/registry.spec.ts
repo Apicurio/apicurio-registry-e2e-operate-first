@@ -76,10 +76,10 @@ test('clean existing registry instances', async ({ page }) => {
 // });
 
 test('create a registry instance create an artifact and delete everything', async ({ page, browserName }) => {
-  test.skip(
-    (browserName === 'webkit' || browserName === 'firefox') &&
-    process.platform === 'darwin', 'The artifact content is pasted with spurious characters'
-  );
+  // test.skip(
+  //   (browserName === 'webkit' || browserName === 'firefox') &&
+  //   process.platform === 'darwin', 'The artifact content is pasted with spurious characters'
+  // );
 
   await login(page);
 
