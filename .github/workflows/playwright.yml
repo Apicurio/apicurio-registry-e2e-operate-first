@@ -24,21 +24,8 @@ jobs:
     - name: Install dependencies
       run: npm ci
 
-    # Caching Playwright from: https://github.com/microsoft/playwright/issues/7249
-    - name: Get installed Playwright version
-      id: playwright-version
-      run: echo "version=$(npm ls @playwright/test | grep @playwright | sed 's/.*@//')" >> $GITHUB_OUTPUT
-    - uses: actions/cache@v3
-      id: playwright-cache
-      with:
-        path: '~/.cache/ms-playwright'
-        key: '${{ runner.os }}-playwright-${{ steps.playwright-version.outputs.version }}'
-        restore-keys: |
-          ${{ runner.os }}-playwright-deps-
     - name: Install Playwright's dependencies
-      if: steps.playwright-cache.outputs.cache-hit != 'true'
       run: npx playwright install --with-deps chromium chrome msedge firefox webkit
-    # End of caching
 
     - name: Run Playwright tests
       env:
@@ -50,12 +37,10 @@ jobs:
       with:
         name: playwright-report
         path: playwright-report/
-        retention-days: 1
-
-    - name: Google Chat Notification
-      uses: Co-qn/google-chat-notification@releases/v1
+        retention-days: 10
+    - uses: actions/upload-artifact@v3
+      if: always()
       with:
-        name: Operate First E2E Test
-        url: ${{ secrets.GOOGLE_CHAT_WEBHOOK }}
-        status: ${{ job.status }}
-      if: failure()
+        name: test-results
+        path: test-results/
+        retention-days: 10
