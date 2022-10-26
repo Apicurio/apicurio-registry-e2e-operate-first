@@ -102,9 +102,12 @@ test('create a registry instance create an artifact and delete everything', asyn
   const uploadButtonLocator = page
     .getByText('Upload artifact', { exact: true })
     .first();
-  
-  await expect(uploadButtonLocator).toBeEnabled()
-    .catch(err => { page.getByText('Reload page', { exact: true }).first().click(); });
+
+  await expect(uploadButtonLocator)
+    .toBeEnabled()
+    .catch((err) => {
+      page.getByText('Reload page', { exact: true }).first().click();
+    });
 
   await expect(uploadButtonLocator).toBeEnabled({ timeout: 10000 });
   await uploadButtonLocator.click();
