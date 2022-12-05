@@ -5,7 +5,7 @@ import * as fs from 'fs';
 const USERNAME = process.env.TEST_USERNAME!;
 const PASSWORD = process.env.TEST_PASSWORD!;
 
-const REGISTRY_CREATION_DELETION_TIMEOUT = 20000;
+const REGISTRY_CREATION_DELETION_TIMEOUT = 30000;
 
 const TEST_UUID = uuid();
 
@@ -15,7 +15,7 @@ const login = async function (page) {
   );
 
   // Expect a title "to contain" a substring.
-  await expect(page).toHaveTitle(/Sign in to operate-first-apicurio/);
+  await expect(page).toHaveTitle(/Sign in to operate-first-apicurio/, { timeout: 10000 });
 
   // do login
   await page.locator('#username').fill(USERNAME);
@@ -29,7 +29,7 @@ const login = async function (page) {
 const createRegistryInstance = async function (page, name) {
   await page.getByText('Create registry instance', { exact: true }).click();
 
-  await page.locator('#create-instance-name').fill(name);
+  await page.locator('#create-instance-name', { timeout: 10000 }).fill(name);
   await page.getByText('Create', { exact: true }).click();
 
   // waiting to have the instance ready
@@ -85,12 +85,6 @@ test('create a registry instance create an artifact and delete everything', asyn
   page,
   browserName
 }) => {
-  test.skip(
-    (browserName === 'webkit' || browserName === 'firefox') &&
-      process.platform === 'darwin',
-    'The artifact content is pasted with spurious characters'
-  );
-
   await login(page);
 
   const testInstanceName = `test-instance-${TEST_UUID}`.substring(0, 32);
@@ -112,16 +106,21 @@ test('create a registry instance create an artifact and delete everything', asyn
   await expect(uploadButtonLocator).toBeEnabled({ timeout: 10000 });
   await uploadButtonLocator.click();
 
-  const artifactContent = fs.readFileSync('./resources/petstore.yaml', {
-    encoding: 'utf-8'
-  });
-  console.debug("Pet Store DATA: ", artifactContent);
+  page.pause();
 
-  // FIXME: fails on Safari
-  await page.locator('#artifact-content').fill(artifactContent);
+  // Use fileChooser as copy&paste seems to be buggy on Mac with Playwright
+  // Note that Promise.all prevents a race condition
+  // between clicking and waiting for the file chooser.
+  const [fileChooser] = await Promise.all([
+    // It is important to call waitForEvent before click to set up waiting.
+    page.waitForEvent('filechooser'),
+    // Opens the file chooser.
+    page.getByRole('button', { name: 'Browse...' }).click(),
+  ]);
+  await fileChooser.setFiles('resources/petstore.yaml');
 
   // FIXME: otherwise the Upload doesn't work -> get stuck on a loading page
-  await new Promise((resolve) => setTimeout(resolve, 300));
+  await new Promise((resolve) => setTimeout(resolve, 500));
 
   const uploadLocator = page.getByText('Upload', { exact: true });
   await expect(uploadLocator).toBeEnabled({ timeout: 10000 });

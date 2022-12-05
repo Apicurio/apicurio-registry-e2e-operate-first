@@ -13,13 +13,13 @@ require('dotenv').config();
 const config: PlaywrightTestConfig = {
   testDir: './tests',
   /* Maximum time one test can run for. */
-  timeout: 30 * 1000,
+  timeout: 60 * 1000,
   expect: {
     /**
      * Maximum time expect() should wait for the condition to be met.
      * For example in `await expect(locator).toHaveText();`
      */
-    timeout: 5000
+    timeout: 10000
   },
   /* Run tests in files in parallel */
   fullyParallel: false,
@@ -34,7 +34,7 @@ const config: PlaywrightTestConfig = {
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Maximum time each action such as `click()` can take. Defaults to 0 (no limit). */
-    actionTimeout: 0,
+    actionTimeout: 20000,
     /* Base URL to use in actions like `await page.goto('/')`. */
     // baseURL: 'http://localhost:3000',
 
@@ -49,18 +49,21 @@ const config: PlaywrightTestConfig = {
       name: 'chromium',
       use: {
         ...devices['Desktop Chrome'],
+        viewport: { width: 1920, height: 1024 },
       },
     },
     {
       name: 'firefox',
       use: {
         ...devices['Desktop Firefox'],
+        viewport: { width: 1920, height: 1024 },
       },
     },
     {
       name: 'webkit',
       use: {
         ...devices['Desktop Safari'],
+        viewport: { width: 1920, height: 1024 },
       },
     },
 
@@ -83,12 +86,14 @@ const config: PlaywrightTestConfig = {
       name: 'Microsoft Edge',
       use: {
         channel: 'msedge',
+        viewport: { width: 1920, height: 1024 },
       },
     },
     {
       name: 'Google Chrome',
       use: {
         channel: 'chrome',
+        viewport: { width: 1920, height: 1024 },
       },
     },
   ],
