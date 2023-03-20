@@ -2,8 +2,8 @@ name: Full - Apicurio Registry Operate First E2E Tests
 on:
   push:
     branches: [ main ]
-  schedule:
-    - cron: "*/30 * * * *"
+#  schedule:
+#    - cron: "*/30 * * * *"
 
 concurrency:
   # Only run once this workflow
